@@ -2,6 +2,12 @@
 
 A full-stack Student Management System built using Spring Boot, MySQL, HTML, CSS, and JavaScript. The application allows users to add, view, update, and delete student records through a simple web interface.
 
+## 🌐 Live Demo
+
+**Try CampusFlow online:** [Open Live Website](https://student-management-system-production-3090.up.railway.app)
+
+Explore the Student Management System directly in your browser.
+
 ## Features
 
 - Add new student records
