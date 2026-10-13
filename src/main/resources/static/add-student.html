@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student | CampusFlow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">C</div>
+            <span>CampusFlow</span>
+        </div>
+
+        <nav class="navigation">
+            <p class="nav-heading">MAIN MENU</p>
+
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-student.html" class="nav-item active">
+                <span class="nav-icon">＋</span>
+                <span>Add Student</span>
+            </a>
+
+            <a href="student-records.html" class="nav-item">
+                <span class="nav-icon">▤</span>
+                <span>Student Records</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot"></span>
+            Student Management System
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">Main Menu / Add Student</p>
+                <h1>Add Student</h1>
+            </div>
+            <a href="student-records.html" class="secondary-btn">
+                View Records →
+            </a>
+        </header>
+
+        <section class="welcome-banner">
+            <div>
+                <p class="eyebrow">STUDENT REGISTRATION</p>
+                <h2>Register a new student</h2>
+                <p>Enter the student's details below to add them to your records.</p>
+            </div>
+            <div class="banner-icon">＋</div>
+        </section>
+
+        <section class="content-card">
+            <div class="section-heading">
+                <div>
+                    <h2>Student Information</h2>
+                    <p>Fill in all fields to complete registration.</p>
+                </div>
+                <span class="required-note">* Required fields</span>
+            </div>
+
+            <form id="studentForm">
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter student's full name"
+                            required
+                            maxlength="100"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="student@example.com"
+                            required
+                            maxlength="150"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course">Course *</label>
+                        <input
+                            type="text"
+                            id="course"
+                            name="course"
+                            placeholder="e.g. Computer Science"
+                            required
+                            maxlength="100"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age *</label>
+                        <input
+                            type="number"
+                            id="age"
+                            name="age"
+                            placeholder="Enter age"
+                            min="1"
+                            max="120"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-footer">
+                    <p>Fields marked * are mandatory.</p>
+                    <div class="form-actions">
+                        <button type="reset" class="secondary-btn">
+                            Clear Form
+                        </button>
+                        <button type="submit" class="primary-btn">
+                            + Register Student
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <footer class="page-footer">
+            CampusFlow · Student Management System
+        </footer>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

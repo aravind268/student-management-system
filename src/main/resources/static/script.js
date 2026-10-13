@@ -5,10 +5,12 @@ const searchInput = document.getElementById("searchInput");
 
 let students = [];
 
+// Display a message
 function showMessage(message) {
     alert(message);
 }
 
+// Read the server response
 async function readResponse(response) {
     const text = await response.text();
 
@@ -29,48 +31,56 @@ async function readResponse(response) {
     return data ?? text;
 }
 
-// Add student
-form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+// Add student — runs only on the Add Student page
+if (form) {
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    const student = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        course: document.getElementById("course").value.trim(),
-        age: Number(document.getElementById("age").value)
-    };
+        const student = {
+            name: document.getElementById("name").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            course: document.getElementById("course").value.trim(),
+            age: Number(document.getElementById("age").value)
+        };
 
-    if (
-        !student.name ||
-        !student.email ||
-        !student.course ||
-        !student.age ||
-        student.age < 1 ||
-        student.age > 120
-    ) {
-        showMessage("Please enter valid details in all fields.");
-        return;
-    }
+        if (
+            !student.name ||
+            !student.email ||
+            !student.course ||
+            !student.age ||
+            student.age < 1 ||
+            student.age > 120
+        ) {
+            showMessage("Please enter valid details in all fields.");
+            return;
+        }
 
-    try {
-        const response = await fetch("/students", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(student)
-        });
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(student.email)) {
+            showMessage("Please enter a valid email address.");
+            return;
+        }
 
-        await readResponse(response);
+        try {
+            const response = await fetch("/students", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(student)
+            });
 
-        showMessage("Student added successfully!");
-        form.reset();
-        await loadStudents();
-    } catch (error) {
-        console.error("Error adding student:", error);
-        showMessage(error.message);
-    }
-});
+            await readResponse(response);
+
+            showMessage("Student added successfully!");
+            form.reset();
+
+            await loadStudents();
+        } catch (error) {
+            console.error("Error adding student:", error);
+            showMessage(error.message);
+        }
+    });
+}
 
 // Load students from Spring Boot
 async function loadStudents() {
@@ -86,39 +96,50 @@ async function loadStudents() {
 
         students = data;
 
-        status.textContent = "Connected";
-        status.style.color = "#16845b";
+        if (status) {
+            status.textContent = "Connected";
+            status.style.color = "#23ad89";
+        }
 
         updateStatistics();
         renderStudents();
     } catch (error) {
         console.error("Error loading students:", error);
 
-        status.textContent = "Offline";
-        status.style.color = "#c33f4b";
+        if (status) {
+            status.textContent = "Offline";
+            status.style.color = "#f87171";
+        }
 
         students = [];
         updateStatistics();
 
-        tableBody.replaceChildren();
+        if (tableBody) {
+            tableBody.replaceChildren();
 
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
 
-        cell.colSpan = 6;
-        cell.className = "empty-state";
-        cell.textContent =
-            "Unable to load students. Check that your backend is running.";
+            cell.colSpan = 6;
+            cell.className = "empty-state";
+            cell.textContent =
+                "Unable to load students. Check that your backend is running.";
 
-        row.appendChild(cell);
-        tableBody.appendChild(row);
+            row.appendChild(cell);
+            tableBody.appendChild(row);
+        }
     }
 }
 
-// Update dashboard numbers
+// Update dashboard statistics
 function updateStatistics() {
-    document.getElementById("totalStudents").textContent =
-        students.length;
+    const totalStudents = document.getElementById("totalStudents");
+    const totalCourses = document.getElementById("totalCourses");
+    const recordCount = document.getElementById("recordCount");
+
+    if (totalStudents) {
+        totalStudents.textContent = students.length;
+    }
 
     const courses = new Set(
         students
@@ -126,16 +147,25 @@ function updateStatistics() {
             .filter(Boolean)
     );
 
-    document.getElementById("totalCourses").textContent =
-        courses.size;
+    if (totalCourses) {
+        totalCourses.textContent = courses.size;
+    }
 
-    document.getElementById("recordCount").textContent =
-        `${students.length} record${students.length === 1 ? "" : "s"}`;
+    if (recordCount) {
+        recordCount.textContent =
+            `${students.length} record${students.length === 1 ? "" : "s"}`;
+    }
 }
 
-// Display students in the table
+// Display records — runs only when the records table exists
 function renderStudents() {
-    const query = searchInput.value.trim().toLowerCase();
+    if (!tableBody) {
+        return;
+    }
+
+    const query = searchInput
+        ? searchInput.value.trim().toLowerCase()
+        : "";
 
     const filteredStudents = students.filter(student => {
         return [
@@ -159,7 +189,7 @@ function renderStudents() {
         cell.className = "empty-state";
         cell.textContent = query
             ? "No students match your search."
-            : "No student records yet. Add your first student above.";
+            : "No student records yet. Add your first student.";
 
         row.appendChild(cell);
         tableBody.appendChild(row);
@@ -187,20 +217,24 @@ function renderStudents() {
 
         const courseCell = addCell("");
         const courseBadge = document.createElement("span");
+
         courseBadge.className = "course-badge";
         courseBadge.textContent = student.course ?? "";
+
         courseCell.appendChild(courseBadge);
 
         addCell(student.age);
 
         const actionsCell = addCell();
         const actions = document.createElement("div");
+
         actions.className = "action-buttons";
 
         const updateButton = document.createElement("button");
         updateButton.type = "button";
         updateButton.className = "update-btn";
         updateButton.textContent = "Edit";
+
         updateButton.addEventListener("click", () => {
             updateStudent(student.id);
         });
@@ -209,6 +243,7 @@ function renderStudents() {
         deleteButton.type = "button";
         deleteButton.className = "delete-btn";
         deleteButton.textContent = "Delete";
+
         deleteButton.addEventListener("click", () => {
             deleteStudent(student.id);
         });
@@ -219,8 +254,10 @@ function renderStudents() {
     });
 }
 
-// Search students
-searchInput.addEventListener("input", renderStudents);
+// Search — runs only on the Student Records page
+if (searchInput) {
+    searchInput.addEventListener("input", renderStudents);
+}
 
 // Delete student
 async function deleteStudent(id) {
@@ -280,9 +317,7 @@ async function updateStudent(id) {
             return;
         }
 
-        if (
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedStudent.email)
-        ) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedStudent.email)) {
             showMessage("Please enter a valid email address.");
             return;
         }

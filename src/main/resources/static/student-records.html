@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Records | CampusFlow</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">C</div>
+            <span>CampusFlow</span>
+        </div>
+
+        <nav class="navigation">
+            <p class="nav-heading">MAIN MENU</p>
+
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="add-student.html" class="nav-item">
+                <span class="nav-icon">＋</span>
+                <span>Add Student</span>
+            </a>
+
+            <a href="student-records.html" class="nav-item active">
+                <span class="nav-icon">▤</span>
+                <span>Student Records</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot"></span>
+            Student Management System
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <p class="breadcrumb">Main Menu / Student Records</p>
+                <h1>Student Records</h1>
+            </div>
+
+            <a href="add-student.html" class="primary-btn">
+                + Add Student
+            </a>
+        </header>
+
+        <section class="welcome-banner">
+            <div>
+                <p class="eyebrow">STUDENT DIRECTORY</p>
+                <h2>Manage your students</h2>
+                <p>Search student information and update or remove existing records.</p>
+            </div>
+            <div class="banner-icon">▤</div>
+        </section>
+
+        <section class="content-card">
+
+            <div class="section-heading">
+                <div>
+                    <h2>All Students</h2>
+                    <p>View and manage registered student information.</p>
+                </div>
+
+                <span id="recordCount" class="record-count">
+                    Loading records...
+                </span>
+            </div>
+
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search by name, email, course or ID..."
+                        aria-label="Search student records"
+                    >
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>STUDENT</th>
+                            <th>EMAIL</th>
+                            <th>COURSE</th>
+                            <th>AGE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTableBody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                Loading student records...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <p>Student records are loaded from your database.</p>
+            </div>
+
+        </section>
+
+        <footer class="page-footer">
+            CampusFlow · Student Management System
+        </footer>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

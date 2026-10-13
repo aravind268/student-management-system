@@ -4,201 +4,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management System</title>
+    <title>CampusFlow | Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="dashboard">
+<div class="dashboard">
 
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-icon">S</div>
+    <aside class="sidebar">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">C</div>
+            <div>
+                <h2>CampusFlow</h2>
+                <span>Student Administration</span>
+            </div>
+        </a>
+
+        <p class="nav-label">WORKSPACE</p>
+        <nav class="navigation">
+            <a href="index.html" class="nav-item active">
+                <span class="nav-icon">⌂</span> Dashboard
+            </a>
+            <a href="add-student.html" class="nav-item">
+                <span class="nav-icon">＋</span> Add Student
+            </a>
+            <a href="student-records.html" class="nav-item">
+                <span class="nav-icon">▤</span> Student Records
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="profile-avatar">A</div>
+            <div>
+                <strong>Administrator</strong>
+                <span>Management Portal</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <span class="eyebrow">WORKSPACE / OVERVIEW</span>
+                <h1>Dashboard</h1>
+                <p>Welcome back! Here's your student overview.</p>
+            </div>
+            <a href="add-student.html" class="primary-btn top-add-btn">
+                + Add Student
+            </a>
+        </header>
+
+        <section class="welcome-banner">
+            <div>
+                <span class="banner-label">STUDENT ADMINISTRATION</span>
+                <h2>Every student, organized.</h2>
+                <p>Manage student information and keep your records up to date.</p>
+                <a href="student-records.html" class="banner-link">
+                    Explore student records <span>→</span>
+                </a>
+            </div>
+            <div class="banner-icon" aria-hidden="true">▤</div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-icon blue">♙</div>
                 <div>
-                    <h2>StudentHub</h2>
-                    <span>Management Portal</span>
+                    <p>Total Students</p>
+                    <h2 id="totalStudents">—</h2>
+                    <span class="stat-note">Registered students</span>
                 </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon teal">▤</div>
+                <div>
+                    <p>Courses</p>
+                    <h2 id="totalCourses">—</h2>
+                    <span class="stat-note">Unique courses listed</span>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <div>
+                    <p>System Status</p>
+                    <h2 class="status-text" id="systemStatus">Checking</h2>
+                    <span class="stat-note">Backend connection</span>
+                </div>
+            </article>
+        </section>
+
+        <section class="content-card quick-actions">
+            <div class="section-heading">
+                <div>
+                    <h2>Quick Actions</h2>
+                    <p>Choose what you'd like to do next.</p>
+                </div>
+                <span class="section-number">01</span>
             </div>
 
-            <p class="nav-label">MAIN MENU</p>
+            <div class="action-grid">
+                <a href="add-student.html" class="action-card">
+                    <div class="action-icon">＋</div>
+                    <div>
+                        <h3>Register a Student</h3>
+                        <p>Add a new student to the database.</p>
+                    </div>
+                    <span class="action-arrow">→</span>
+                </a>
 
-            <nav>
-                <a href="#dashboard" class="nav-item active">
-                    <span>▦</span> Dashboard
+                <a href="student-records.html" class="action-card">
+                    <div class="action-icon records-icon">▤</div>
+                    <div>
+                        <h3>Manage Records</h3>
+                        <p>Search, update, and manage students.</p>
+                    </div>
+                    <span class="action-arrow">→</span>
                 </a>
-                <a href="#add-student" class="nav-item">
-                    <span>＋</span> Add Student
-                </a>
-                <a href="#student-list" class="nav-item">
-                    <span>☷</span> Student Records
-                </a>
-            </nav>
-
-            <div class="sidebar-bottom">
-                <div class="profile-avatar">A</div>
-                <div>
-                    <strong>Administrator</strong>
-                    <span>Student Portal</span>
-                </div>
             </div>
-        </aside>
+        </section>
 
-        <main class="main-content" id="dashboard">
+        <footer class="page-footer">
+            CampusFlow · Student Management System
+            <span>Built with Java &amp; Spring Boot</span>
+        </footer>
+    </main>
+</div>
 
-            <header class="topbar">
-                <div>
-                    <span class="eyebrow">ADMINISTRATION / OVERVIEW</span>
-                    <h1>Student Management System</h1>
-                    <p>Manage student information in one place.</p>
-                </div>
-
-                <a href="#add-student" class="top-add-btn">
-                    + Add Student
-                </a>
-            </header>
-
-            <section class="welcome-banner">
-                <div>
-                    <span class="banner-label">STUDENT ADMINISTRATION</span>
-                    <h2>Welcome to your dashboard!</h2>
-                    <p>Keep your student records organized and up to date.</p>
-                </div>
-                <div class="banner-icon">🎓</div>
-            </section>
-
-            <section class="stats-grid">
-                <article class="stat-card">
-                    <div class="stat-icon blue">♙</div>
-                    <div>
-                        <p>Total Students</p>
-                        <h2 id="totalStudents">—</h2>
-                        <span class="stat-note">Registered records</span>
-                    </div>
-                </article>
-
-                <article class="stat-card">
-                    <div class="stat-icon purple">▤</div>
-                    <div>
-                        <p>Courses</p>
-                        <h2 id="totalCourses">—</h2>
-                        <span class="stat-note">Unique courses listed</span>
-                    </div>
-                </article>
-
-                <article class="stat-card">
-                    <div class="stat-icon green">✓</div>
-                    <div>
-                        <p>System Status</p>
-                        <h2 class="status-text" id="systemStatus">Checking</h2>
-                        <span class="stat-note">Backend connection</span>
-                    </div>
-                </article>
-            </section>
-
-            <section class="content-card" id="add-student">
-                <div class="section-heading">
-                    <div>
-                        <h2>Add New Student</h2>
-                        <p>Enter the details below to register a student.</p>
-                    </div>
-                    <span class="section-number">01</span>
-                </div>
-
-                <form id="studentForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name"
-                                   placeholder="Enter student name"
-                                   required maxlength="100">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email"
-                                   placeholder="student@example.com"
-                                   required maxlength="150">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="course">Course</label>
-                            <input type="text" id="course"
-                                   placeholder="e.g. Java Full Stack"
-                                   required maxlength="100">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="age">Age</label>
-                            <input type="number" id="age"
-                                   placeholder="Enter age"
-                                   min="1" max="120" required>
-                        </div>
-                    </div>
-
-                    <div class="form-footer">
-                        <p>All fields are required.</p>
-                        <button class="primary-btn" type="submit">
-                            + Register Student
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <section class="content-card" id="student-list">
-                <div class="section-heading table-heading">
-                    <div>
-                        <h2>Student Records</h2>
-                        <p>View and manage registered students.</p>
-                    </div>
-
-                    <span class="record-count" id="recordCount">
-                        0 records
-                    </span>
-                </div>
-
-                <div class="table-toolbar">
-                    <div class="search-box">
-                        <span>⌕</span>
-                        <input type="search" id="searchInput"
-                               placeholder="Search by name, email or course..."
-                               aria-label="Search student records">
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table id="studentTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>STUDENT</th>
-                                <th>EMAIL</th>
-                                <th>COURSE</th>
-                                <th>AGE</th>
-                                <th>ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTableBody">
-                            <tr>
-                                <td colspan="6" class="empty-state">
-                                    Loading student records...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <p class="table-footer">
-                    Student records are retrieved from your database.
-                </p>
-            </section>
-
-            <footer class="page-footer">
-                Student Management System · Built with Java & Spring Boot
-            </footer>
-
-        </main>
-    </div>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
