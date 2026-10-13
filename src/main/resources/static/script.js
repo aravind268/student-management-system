@@ -1,160 +1,309 @@
-const form = document.querySelector("form");
 
-form.addEventListener("submit", function(event) {
+const form = document.getElementById("studentForm");
+const tableBody = document.getElementById("studentTableBody");
+const searchInput = document.getElementById("searchInput");
 
+let students = [];
+
+function showMessage(message) {
+    alert(message);
+}
+
+async function readResponse(response) {
+    const text = await response.text();
+
+    let data = null;
+
+    try {
+        data = text ? JSON.parse(text) : null;
+    } catch {
+        data = null;
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data?.message || text || "Request failed. Please try again."
+        );
+    }
+
+    return data ?? text;
+}
+
+// Add student
+form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const course = document.getElementById("course").value;
-    const age = document.getElementById("age").value;
+    const student = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        course: document.getElementById("course").value.trim(),
+        age: Number(document.getElementById("age").value)
+    };
 
-    if (name === "" || email === "" || course === "" || age === "") {
-        alert("Please fill all fields!");
+    if (
+        !student.name ||
+        !student.email ||
+        !student.course ||
+        !student.age ||
+        student.age < 1 ||
+        student.age > 120
+    ) {
+        showMessage("Please enter valid details in all fields.");
         return;
     }
 
-    const student = {
-        name: name,
-        email: email,
-        course: course,
-        age: Number(age)
-    };
+    try {
+        const response = await fetch("/students", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(student)
+        });
 
-    fetch("/students", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(student)
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(error => {
-                throw new Error(error.message || "Failed to add student");
-            });
-        }
+        await readResponse(response);
 
-        return response.json();
-    })
-    .then(data => {
-        console.log("Student added:", data);
-        alert("Student added successfully!");
+        showMessage("Student added successfully!");
         form.reset();
-        loadStudents();
-    })
-    .catch(error => {
-        console.log("Error:", error);
-        alert(error.message);
-    });
-
+        await loadStudents();
+    } catch (error) {
+        console.error("Error adding student:", error);
+        showMessage(error.message);
+    }
 });
 
+// Load students from Spring Boot
+async function loadStudents() {
+    const status = document.getElementById("systemStatus");
 
-function loadStudents() {
+    try {
+        const response = await fetch("/students");
+        const data = await readResponse(response);
 
-    fetch("/students")
-        .then(response => response.json())
-        .then(students => {
+        if (!Array.isArray(data)) {
+            throw new Error("Unexpected student data from the server.");
+        }
 
-            const tableBody = document.getElementById("studentTableBody");
+        students = data;
 
-            tableBody.innerHTML = "";
+        status.textContent = "Connected";
+        status.style.color = "#16845b";
 
-            students.forEach(student => {
+        updateStatistics();
+        renderStudents();
+    } catch (error) {
+        console.error("Error loading students:", error);
 
-                const row = `
-                    <tr>
-                        <td>${student.id}</td>
-                        <td>${student.name}</td>
-                        <td>${student.email}</td>
-                        <td>${student.course}</td>
-                        <td>${student.age}</td>
-                        <td>
-                            <button class="update-btn" onclick="updateStudent(${student.id})">Update</button>
-                            <button class="delete-btn" onclick="deleteStudent(${student.id})">Delete</button>
-                        </td>
-                    </tr>
-                `;
+        status.textContent = "Offline";
+        status.style.color = "#c33f4b";
 
-                tableBody.innerHTML += row;
-            });
+        students = [];
+        updateStatistics();
 
-        })
-        .catch(error => {
-            console.log("Error loading students:", error);
-        });
-}
+        tableBody.replaceChildren();
 
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
 
-loadStudents();
+        cell.colSpan = 6;
+        cell.className = "empty-state";
+        cell.textContent =
+            "Unable to load students. Check that your backend is running.";
 
-
-function deleteStudent(id) {
-
-    if (confirm("Are you sure you want to delete this student?")) {
-
-        fetch("/students/" + id, {
-            method: "DELETE"
-        })
-        .then(response => response.text())
-        .then(data => {
-            alert(data);
-            loadStudents();
-        })
-        .catch(error => {
-            console.log("Error:", error);
-            alert("Something went wrong!");
-        });
+        row.appendChild(cell);
+        tableBody.appendChild(row);
     }
 }
 
+// Update dashboard numbers
+function updateStatistics() {
+    document.getElementById("totalStudents").textContent =
+        students.length;
 
-function updateStudent(id) {
+    const courses = new Set(
+        students
+            .map(student => student.course?.trim().toLowerCase())
+            .filter(Boolean)
+    );
 
-    fetch("/students/" + id)
-        .then(response => response.json())
-        .then(student => {
+    document.getElementById("totalCourses").textContent =
+        courses.size;
 
-            const name = prompt("Enter student name:", student.name);
-            const email = prompt("Enter student email:", student.email);
-            const course = prompt("Enter student course:", student.course);
-            const age = prompt("Enter student age:", student.age);
+    document.getElementById("recordCount").textContent =
+        `${students.length} record${students.length === 1 ? "" : "s"}`;
+}
 
-            if (name === null || email === null || course === null || age === null) {
-                return;
+// Display students in the table
+function renderStudents() {
+    const query = searchInput.value.trim().toLowerCase();
+
+    const filteredStudents = students.filter(student => {
+        return [
+            student.id,
+            student.name,
+            student.email,
+            student.course,
+            student.age
+        ].some(value =>
+            String(value ?? "").toLowerCase().includes(query)
+        );
+    });
+
+    tableBody.replaceChildren();
+
+    if (filteredStudents.length === 0) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 6;
+        cell.className = "empty-state";
+        cell.textContent = query
+            ? "No students match your search."
+            : "No student records yet. Add your first student above.";
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+        return;
+    }
+
+    filteredStudents.forEach(student => {
+        const row = document.createElement("tr");
+
+        function addCell(value, className = "") {
+            const cell = document.createElement("td");
+            cell.textContent = value ?? "";
+
+            if (className) {
+                cell.className = className;
             }
-            if (name === "" || email === "" || course === "" || age === "") {
-    alert("Please fill all fields!");
-    return;
-}
 
-            const updatedStudent = {
-                name: name,
-                email: email,
-                course: course,
-                age: Number(age)
-            };
+            row.appendChild(cell);
+            return cell;
+        }
 
-            fetch("/students/" + id, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedStudent)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert("Student updated successfully!");
-                loadStudents();
-            })
-            .catch(error => {
-                console.log("Error:", error);
-                alert("Something went wrong!");
-            });
+        addCell(student.id, "student-id");
+        addCell(student.name, "student-name");
+        addCell(student.email);
 
-        })
-        .catch(error => {
-            console.log("Error:", error);
+        const courseCell = addCell("");
+        const courseBadge = document.createElement("span");
+        courseBadge.className = "course-badge";
+        courseBadge.textContent = student.course ?? "";
+        courseCell.appendChild(courseBadge);
+
+        addCell(student.age);
+
+        const actionsCell = addCell();
+        const actions = document.createElement("div");
+        actions.className = "action-buttons";
+
+        const updateButton = document.createElement("button");
+        updateButton.type = "button";
+        updateButton.className = "update-btn";
+        updateButton.textContent = "Edit";
+        updateButton.addEventListener("click", () => {
+            updateStudent(student.id);
         });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-btn";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => {
+            deleteStudent(student.id);
+        });
+
+        actions.append(updateButton, deleteButton);
+        actionsCell.appendChild(actions);
+        tableBody.appendChild(row);
+    });
 }
+
+// Search students
+searchInput.addEventListener("input", renderStudents);
+
+// Delete student
+async function deleteStudent(id) {
+    if (!confirm("Are you sure you want to delete this student?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/students/${id}`, {
+            method: "DELETE"
+        });
+
+        await readResponse(response);
+
+        showMessage("Student deleted successfully!");
+        await loadStudents();
+    } catch (error) {
+        console.error("Error deleting student:", error);
+        showMessage(error.message);
+    }
+}
+
+// Update student
+async function updateStudent(id) {
+    try {
+        const response = await fetch(`/students/${id}`);
+        const student = await readResponse(response);
+
+        const name = prompt("Enter student name:", student.name);
+        if (name === null) return;
+
+        const email = prompt("Enter student email:", student.email);
+        if (email === null) return;
+
+        const course = prompt("Enter student course:", student.course);
+        if (course === null) return;
+
+        const age = prompt("Enter student age:", student.age);
+        if (age === null) return;
+
+        const updatedStudent = {
+            name: name.trim(),
+            email: email.trim(),
+            course: course.trim(),
+            age: Number(age)
+        };
+
+        if (
+            !updatedStudent.name ||
+            !updatedStudent.email ||
+            !updatedStudent.course ||
+            !updatedStudent.age ||
+            updatedStudent.age < 1 ||
+            updatedStudent.age > 120
+        ) {
+            showMessage("Please enter valid details in all fields.");
+            return;
+        }
+
+        if (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedStudent.email)
+        ) {
+            showMessage("Please enter a valid email address.");
+            return;
+        }
+
+        const updateResponse = await fetch(`/students/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedStudent)
+        });
+
+        await readResponse(updateResponse);
+
+        showMessage("Student updated successfully!");
+        await loadStudents();
+    } catch (error) {
+        console.error("Error updating student:", error);
+        showMessage(error.message);
+    }
+}
+
+// Initial page load
+loadStudents();
